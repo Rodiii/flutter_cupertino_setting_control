@@ -534,7 +534,7 @@ class SettingRowState extends State<SettingRow> {
 
   void showDropDownList() async {
     final SettingsDropDownConfig tmp = _stateRowData;
-    int index = tmp.choices.values.toList().indexOf(_result);
+    int index = tmp.choices.keys.toList().indexOf(_result);
     if (index == -1) {
       index = 0;
     }
