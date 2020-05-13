@@ -1,0 +1,16 @@
+name: example
+description: Flutter Cupertino Setting Control Example
+version: 1.0.1
+
+dependencies:
+  cupertino_setting_control:
+    path: ../
+  flutter:
+    sdk: flutter
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+flutter:
+  uses-material-design: true
