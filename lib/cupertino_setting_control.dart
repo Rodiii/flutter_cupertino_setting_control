@@ -129,15 +129,13 @@ class SettingsTextFieldConfig extends SettingRowConfig {
       this.maxLength,
       this.maxLines = 1,
       this.textInputType = TextInputType.text,
-      this.initialValue,
-      this.textfieldController})
+      this.initialValue})
       : super(type: SettingDataType.kWidgetTextField, title: title, unit: unit);
 
   final String initialValue;
   final int maxLength;
   final int maxLines;
   final TextInputType textInputType;
-  TextEditingController textfieldController = new TextEditingController();
 }
 
 class SettingsRowConfiguration {
@@ -195,7 +193,7 @@ class SettingRow extends StatefulWidget {
 /// The state of the currently displayed tasks widget
 class SettingRowState extends State<SettingRow> {
   SettingRowConfig _stateRowData;
-  Timer delayedParentNotificationTimer;
+  final TextEditingController _textfieldController = new TextEditingController();
 
   dynamic _result;
 
@@ -204,23 +202,31 @@ class SettingRowState extends State<SettingRow> {
     super.initState();
 
     _stateRowData = widget.rowData;
-    if (widget.rowData is SettingsSliderConfig)
-      _result = (widget.rowData as SettingsSliderConfig).initialValue;
-    else if (widget.rowData is SettingsDropDownConfig)
+    if (widget.rowData is SettingsDropDownConfig) {
       _result = (widget.rowData as SettingsDropDownConfig).initialKey;
-    else if (widget.rowData is SettingsNewScreenConfig)
-      _result = (widget.rowData as SettingsNewScreenConfig).initialValue;
-    else if (widget.rowData is SettingsSliderConfig)
-      _result = (widget.rowData as SettingsSliderConfig).initialValue;
-    else if (widget.rowData is SettingsSliderFromToConfig)
+      if (!(widget.rowData as SettingsDropDownConfig)
+          .choices
+          .keys
+          .contains(_result)) {
+        _result = (widget.rowData as SettingsDropDownConfig).choices.keys.first;
+      }
+    } else if (widget.rowData is SettingsNewScreenConfig) {
+      _result = (widget.rowData as SettingsNewScreenConfig).initialValue ?? '';
+    } else if (widget.rowData is SettingsSliderConfig) {
+      _result = (widget.rowData as SettingsSliderConfig).initialValue ??
+          (widget.rowData as SettingsSliderConfig).to;
+    } else if (widget.rowData is SettingsSliderFromToConfig) {
       _result = [
-        (widget.rowData as SettingsSliderFromToConfig).initialFrom,
-        (widget.rowData as SettingsSliderFromToConfig).initialFrom
+        (widget.rowData as SettingsSliderFromToConfig).initialFrom ??
+            (widget.rowData as SettingsSliderFromToConfig).from,
+        (widget.rowData as SettingsSliderFromToConfig).initialTo ??
+            (widget.rowData as SettingsSliderFromToConfig).to
       ];
-    else if (widget.rowData is SettingsTextFieldConfig)
-      _result = (widget.rowData as SettingsTextFieldConfig).initialValue;
-    else if (widget.rowData is SettingsYesNoConfig)
-      _result = (widget.rowData as SettingsYesNoConfig).initialValue;
+    } else if (widget.rowData is SettingsTextFieldConfig) {
+      _result = (widget.rowData as SettingsTextFieldConfig).initialValue ?? '';
+    } else if (widget.rowData is SettingsYesNoConfig) {
+      _result = (widget.rowData as SettingsYesNoConfig).initialValue ?? true;
+    }
   }
 
   void updateState() {
@@ -315,7 +321,7 @@ class SettingRowState extends State<SettingRow> {
   void onTextFieldChange() {
     //setState(() {
     final SettingsTextFieldConfig tmp = _stateRowData;
-    _result = tmp.textfieldController.text;
+    _result = _textfieldController.text;
     //});
 
     widget.onSettingDataRowChange(_result);
@@ -407,8 +413,8 @@ class SettingRowState extends State<SettingRow> {
     // Text Field Widget
     if (_stateRowData.type == SettingDataType.kWidgetTextField) {
       final SettingsTextFieldConfig tmp = _stateRowData;
-      tmp.textfieldController.text = _result;
-      tmp.textfieldController.addListener(onTextFieldChange);
+      _textfieldController.text = _result;
+      _textfieldController.addListener(onTextFieldChange);
 
       final InputDecoration decorator = InputDecoration(
         isDense: true,
@@ -444,7 +450,7 @@ class SettingRowState extends State<SettingRow> {
             autocorrect: tmp.textInputType == TextInputType.text,
             style: TextStyle(
                 color: widget.style.textColor, fontSize: widget.style.fontSize),
-            controller: tmp.textfieldController,
+            controller: _textfieldController,
             decoration: decorator),
       );
     }
