@@ -4,6 +4,7 @@
 With cupertino_setting_control you can create a settings page or a simple form very easy. Therefore, cupertino_setting_control
 offers multiple Cupertino-Widgets which can be used very flexible and abstracted.
 
+
 ## Quick Usage
 A few examples:
 
@@ -34,6 +35,8 @@ new SettingRow(
     onSettingDataRowChange: onChatSettingChange,
 ),
 ```
+
+A complete tutorial how to use Cupertino Setting Control can be found here: [Tutorial](https://rothech.com/settings-page-with-flutter)
 
 Please refer to the example for more examples: [Quick-Link](https://github.com/Rodiii/flutter_cupertino_setting_control/blob/master/example/lib/main.dart)
 

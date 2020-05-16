@@ -1,3 +1,7 @@
+## 1.0.0+5
+  * Added reference to entire tutorial
+  * Removed NewPage settings control. It wasn't working anyway ;)
+
 ## 1.0.0+4
   * Added a lot of documentation for usage.
 

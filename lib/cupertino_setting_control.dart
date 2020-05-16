@@ -15,7 +15,6 @@ enum SettingDataType {
   kWidgetDropdown,
   kWidgetSliderFromTo,
   kWidgetYesNo,
-  kWidgetNewScreen,
   kWidgetTextField,
   kWidgetUrlData,
   kWidgetButtonData,
@@ -57,15 +56,6 @@ class SettingsSliderConfig extends SettingRowConfig {
 
   /// If justIntValues is true, the user won't be able to set double value
   final bool justIntValues;
-}
-
-class SettingsNewScreenConfig extends SettingRowConfig {
-  /// Config for a setting widget which will navigate to a new page if clicked
-  SettingsNewScreenConfig({title, unit = '', this.newScreen})
-      : super(type: SettingDataType.kWidgetNewScreen, title: title, unit: unit);
-
-  /// The widget which shall be opened if the setting widget is clicked
-  final Widget newScreen;
 }
 
 class SettingsURLConfig extends SettingRowConfig {
@@ -317,16 +307,6 @@ class SettingRowState extends State<SettingRow> {
     });
   }
 
-  void gotoNewPage() {
-    if (_stateRowData.type != SettingDataType.kWidgetNewScreen)
-      return;
-    else {
-      final SettingsNewScreenConfig tmp = _stateRowData;
-      Navigator.of(context, rootNavigator: true)
-          .push(new MaterialPageRoute(builder: (context) => tmp.newScreen));
-    }
-  }
-
   Future<void> gotoURL() async {
     if (_stateRowData.type != SettingDataType.kWidgetUrlData)
       return;
@@ -436,21 +416,11 @@ class SettingRowState extends State<SettingRow> {
 
       resultText = resultFrom + '-' + resultTo + tmp.unit;
     }
-    if (resultText != null)
-      return new Text(resultText,
-          style: TextStyle(
-              fontSize: widget.style.fontSize,
-              color: !widget.config.showAsTextField
-                  ? CupertinoColors.inactiveGray
-                  : widget.style.textColor));
 
     // Widgets which are "pressable"
     if (_stateRowData.type == SettingDataType.kWidgetDropdown) {
       final SettingsDropDownConfig tmp = _stateRowData;
       resultText = tmp.choices[_result] + tmp.unit;
-    } else if (_stateRowData.type == SettingDataType.kWidgetNewScreen) {
-      final SettingsNewScreenConfig tmp = _stateRowData;
-      resultText = _result + tmp.unit;
     } else if (_stateRowData.type == SettingDataType.kWidgetUrlData ||
         _stateRowData.type == SettingDataType.kWidgetButtonData) {
       resultText = '';
@@ -460,13 +430,20 @@ class SettingRowState extends State<SettingRow> {
         Text(resultText,
             style: TextStyle(
                 fontSize: widget.style.fontSize,
-                color: !widget.config.showAsTextField
+                color: !widget.config.showAsTextField &&
+                        !(_stateRowData.type == SettingDataType.kWidgetSlider ||
+                            _stateRowData.type ==
+                                SettingDataType.kWidgetSliderFromTo) &&
+                        !(_stateRowData.type == SettingDataType.kWidgetDropdown)
                     ? CupertinoColors.inactiveGray
                     : widget.style.textColor),
             textAlign: _stateRowData.type != SettingDataType.kWidgetButtonData
                 ? TextAlign.start
                 : TextAlign.center),
-        _stateRowData.type != SettingDataType.kWidgetButtonData ||
+        (_stateRowData.type != SettingDataType.kWidgetButtonData &&
+                    !(_stateRowData.type == SettingDataType.kWidgetSlider ||
+                        _stateRowData.type ==
+                            SettingDataType.kWidgetSliderFromTo)) ||
                 (_stateRowData.type == SettingDataType.kWidgetButtonData &&
                     (_stateRowData as SettingsButtonConfig).tick)
             ? Container(
@@ -642,8 +619,7 @@ class SettingRowState extends State<SettingRow> {
 
   Color currentRowColor;
   void highlightRow(TapDownDetails det) {
-    if (_stateRowData.type == SettingDataType.kWidgetNewScreen ||
-        _stateRowData.type == SettingDataType.kWidgetDropdown ||
+    if (_stateRowData.type == SettingDataType.kWidgetDropdown ||
         _stateRowData.type == SettingDataType.kWidgetUrlData ||
         _stateRowData.type == SettingDataType.kWidgetButtonData) {
       currentRowColor = widget.style.highlightColor;
@@ -652,8 +628,7 @@ class SettingRowState extends State<SettingRow> {
   }
 
   void unhighlightRow() {
-    if (_stateRowData.type == SettingDataType.kWidgetNewScreen ||
-        _stateRowData.type == SettingDataType.kWidgetDropdown ||
+    if (_stateRowData.type == SettingDataType.kWidgetDropdown ||
         _stateRowData.type == SettingDataType.kWidgetUrlData ||
         _stateRowData.type == SettingDataType.kWidgetButtonData) {
       currentRowColor = widget.style.backgroundColor;
@@ -662,8 +637,7 @@ class SettingRowState extends State<SettingRow> {
   }
 
   void unhighlightUpRow(TapUpDetails det) {
-    if (_stateRowData.type == SettingDataType.kWidgetNewScreen ||
-        _stateRowData.type == SettingDataType.kWidgetDropdown ||
+    if (_stateRowData.type == SettingDataType.kWidgetDropdown ||
         _stateRowData.type == SettingDataType.kWidgetUrlData ||
         _stateRowData.type == SettingDataType.kWidgetButtonData) {
       currentRowColor = widget.style.backgroundColor;
@@ -684,28 +658,23 @@ class SettingRowState extends State<SettingRow> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           widget.config.showTopTitle
-              ? Column(children: <Widget>[
-                  new Text(
-                    _stateRowData.title,
-                    style: TextStyle(
-                        color: widget.style.topTitleColor,
-                        fontSize: 15.0,
-                        fontWeight: FontWeight.normal),
-                  ),
-                  const Padding(
-                    padding: const EdgeInsets.only(bottom: 5.0),
-                  ),
-                ])
+              ? Padding(
+                  padding: const EdgeInsets.fromLTRB(25.0, 0.0, 25.0, 5.0),
+                  child: Column(children: <Widget>[
+                    new Text(
+                      _stateRowData.title,
+                      style: TextStyle(
+                          color: widget.style.topTitleColor,
+                          fontSize: 15.0,
+                          fontWeight: FontWeight.normal),
+                    ),
+                  ]))
               : Container(),
           new GestureDetector(
             onTap: !widget.enabled
                 ? null
                 : () async {
-                    if (_stateRowData.type ==
-                        SettingDataType.kWidgetNewScreen) {
-                      gotoNewPage();
-                    } else if (_stateRowData.type ==
-                        SettingDataType.kWidgetDropdown) {
+                    if (_stateRowData.type == SettingDataType.kWidgetDropdown) {
                       showDropDownList();
                     } else if (_stateRowData.type ==
                         SettingDataType.kWidgetUrlData) {
@@ -728,7 +697,7 @@ class SettingRowState extends State<SettingRow> {
                 color: currentRowColor,
                 border: widget.config.showAsSingleSetting
                     ? null
-                    : Border(
+                    : const Border(
                         bottom: BorderSide(
                             color: CupertinoColors.inactiveGray, width: 0.0),
                         top: BorderSide(
