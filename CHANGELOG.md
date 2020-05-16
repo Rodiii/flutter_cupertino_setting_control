@@ -1,3 +1,6 @@
+## 1.0.0+4
+  * Added a lot of documentation for usage.
+
 ## 1.0.0+3
   * Fixed a bug that caused drop down preselection not to work.
 

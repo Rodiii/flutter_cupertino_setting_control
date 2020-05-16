@@ -22,14 +22,21 @@ enum SettingDataType {
 }
 
 class SettingRowConfig {
+  /// Base type for all possible settings configuration
   const SettingRowConfig({this.title, this.type, this.unit = ''});
 
+  /// The title which shall be displayed for the widget (e.g. on the left side)
   final String title;
+
+  /// The type of the setting widget
   final SettingDataType type;
+
+  /// The unit which shall be displayed for the setting widget. E.g. gramm for slider values: 0g...100g vs. 0...100
   final String unit;
 }
 
 class SettingsSliderConfig extends SettingRowConfig {
+  /// Config for a Slider setting widget
   SettingsSliderConfig(
       {title,
       unit = '',
@@ -39,39 +46,53 @@ class SettingsSliderConfig extends SettingRowConfig {
       this.justIntValues = false})
       : super(type: SettingDataType.kWidgetSlider, title: title, unit: unit);
 
+  /// The minimum value which shall be selectable by the slider
   final double from;
+
+  /// The maximum value which shall be selectable by the slider
   final double to;
 
+  /// The initial value which shall be selected by the slider
   final double initialValue;
+
+  /// If justIntValues is true, the user won't be able to set double value
   final bool justIntValues;
 }
 
 class SettingsNewScreenConfig extends SettingRowConfig {
-  SettingsNewScreenConfig({title, unit = '', this.newScreen, this.initialValue})
+  /// Config for a setting widget which will navigate to a new page if clicked
+  SettingsNewScreenConfig({title, unit = '', this.newScreen})
       : super(type: SettingDataType.kWidgetNewScreen, title: title, unit: unit);
 
+  /// The widget which shall be opened if the setting widget is clicked
   final Widget newScreen;
-  final String initialValue;
 }
 
 class SettingsURLConfig extends SettingRowConfig {
+  /// Config for a setting widget which will open an URL if clicked
   SettingsURLConfig({title, unit = '', this.url})
       : super(type: SettingDataType.kWidgetUrlData, title: title, unit: unit);
 
+  /// URL which shall be opened if the setting widget is clicked
   final String url;
 }
 
 class SettingsButtonConfig extends SettingRowConfig {
+  /// Config for a button setting widget
   SettingsButtonConfig(
       {title, unit = '', this.functionToCall, this.tick = false})
       : super(
             type: SettingDataType.kWidgetButtonData, title: title, unit: unit);
 
+  /// Function to be called if the button is clicked
   final Function functionToCall;
+
+  /// If tick is true, a '>' will be displayed next to the button title
   final bool tick;
 }
 
 class SettingsSliderFromToConfig extends SettingRowConfig {
+  /// Config for a Slider setting for selecting ranges
   SettingsSliderFromToConfig(
       {title,
       unit = '',
@@ -85,16 +106,24 @@ class SettingsSliderFromToConfig extends SettingRowConfig {
             title: title,
             unit: unit);
 
-  final bool justIntValues;
-
+  /// The minimum value which shall be selectable by the slider
   final double from;
+
+  /// The maximum value which shall be selectable by the slider
   final double to;
 
+  /// The start initial value which shall be selected by the slider
   final double initialFrom;
+
+  /// The end initial value which shall be selected by the slider
   final double initialTo;
+
+  /// If justIntValues is true, the user won't be able to set double value
+  final bool justIntValues;
 }
 
 class SettingsDropDownConfig extends SettingRowConfig {
+  /// Config for a drop down settings widget
   SettingsDropDownConfig(
       {title,
       unit = '',
@@ -104,25 +133,31 @@ class SettingsDropDownConfig extends SettingRowConfig {
       this.onDropdownFinished})
       : super(type: SettingDataType.kWidgetDropdown, title: title, unit: unit);
 
+  /// Contains the choices which shall be selectable for the user. This is a key, value map.
+  /// The keys shall be unique identifiers for the values which are displayed by the widget
   final Map<String, String> choices;
 
+  /// Values which shall be not selectable by the user
   final List<dynamic> redList;
 
+  /// The initial choices key which shall be selected
   final String initialKey;
 
+  /// The callback which shall be called when the user finally selected an entry
   final Function onDropdownFinished;
 }
 
 class SettingsYesNoConfig extends SettingRowConfig {
+  /// Config for a boolean (=yes no) settings widget
   SettingsYesNoConfig({title, unit = '', this.initialValue})
       : super(type: SettingDataType.kWidgetYesNo, title: title, unit: unit);
 
+  /// The initial value which shall be selected by the widget
   final bool initialValue;
-
-  bool result;
 }
 
 class SettingsTextFieldConfig extends SettingRowConfig {
+  /// Config for a text field settings widget
   SettingsTextFieldConfig(
       {title,
       unit = '',
@@ -133,48 +168,85 @@ class SettingsTextFieldConfig extends SettingRowConfig {
       this.initialValue})
       : super(type: SettingDataType.kWidgetTextField, title: title, unit: unit);
 
+  /// The initial value which shall be visible in the text field
   final String initialValue;
+
+  /// The maximum number of characters which can be inserted into the text field (null = infinity)
   final int maxLength;
+
+  /// The maximum number of lines which can be used by the user to insert text (null = one line)
   final int maxLines;
+
+  /// The text input type for the text field
   final TextInputType textInputType;
+
+  /// The capitalization use for the text field
   final TextCapitalization textCapitalization;
 }
 
 class SettingsRowConfiguration {
+  /// Configures the general look and feel of the settings row
   const SettingsRowConfiguration({
+    this.showTitleLeft = true,
     this.showTopTitle = false,
     this.showAsTextField = false,
-    this.showTitleLeft = true,
     this.showAsSingleSetting = false,
   });
 
+  /// If true, the title will be displayed on top of the configurable setting widget (e.g. drop down)
   final bool showTopTitle;
-  final bool showAsTextField;
+
+  /// If true, the title will be displayed in the same line and left to the configurable setting widget
   final bool showTitleLeft;
+
+  /// If true, the configurable setting widget will be displayed as text field widget (a border around the widget)
+  /// This makes sense e.g. for drop down widgets which shall be displayed as a text field
+  final bool showAsTextField;
+
+  /// Will remove the border on top and bottom of the setting control. This makes sense if you want to use the widget in e.g. a form.
   final bool showAsSingleSetting;
 }
 
 class SettingsRowStyle {
+  /// Style modification options for the setting control
   const SettingsRowStyle({
     this.noPadding = false,
     this.fontSize = 17.0,
     this.backgroundColor = CupertinoColors.systemBackground,
     this.textColor = CupertinoColors.label,
     this.activeColor = CupertinoColors.systemBlue,
+    this.topTitleColor = CupertinoColors.systemBlue,
     this.highlightColor = CupertinoColors.systemGrey6,
     this.contentPadding = 15.0,
   });
 
+  /// Every padding will be removed if set
   final bool noPadding;
+
+  /// Modifies the font size of the configurable setting widget
   final double fontSize;
+
+  /// Sets the background color of the configurable setting widget
   final Color backgroundColor;
+
+  /// Sets the "active" color for the configurable setting widget
   final Color activeColor;
+
+  /// Sets the color for title of the setting if the top title option is chosen
+  final Color topTitleColor;
+
+  /// The color of the text within the configurable setting control
   final Color textColor;
+
+  /// The color which shall be used to highlight the setting control
   final Color highlightColor;
+
+  /// The content padding within a configurable setting control (esp. for text fields)
   final double contentPadding;
 }
 
 class SettingRow extends StatefulWidget {
+  /// A setting widget with multiple configuration options
   const SettingRow(
       {this.rowData,
       this.onSettingDataRowChange,
@@ -182,10 +254,19 @@ class SettingRow extends StatefulWidget {
       this.style = const SettingsRowStyle(),
       this.enabled = true});
 
+  /// Defines the type of the setting row widget. E.g. a drop down, text field etc.
   final SettingRowConfig rowData;
+
+  /// The function to be called if the value of the setting control changes
   final Function onSettingDataRowChange;
+
+  /// Configuration options, e.g. where the title shall be displayed
   final SettingsRowConfiguration config;
+
+  /// The style of the setting row widget
   final SettingsRowStyle style;
+
+  /// If true, the setting control widget won't be clickable
   final bool enabled;
 
   @override
@@ -213,8 +294,6 @@ class SettingRowState extends State<SettingRow> {
           .contains(_result)) {
         _result = (widget.rowData as SettingsDropDownConfig).choices.keys.first;
       }
-    } else if (widget.rowData is SettingsNewScreenConfig) {
-      _result = (widget.rowData as SettingsNewScreenConfig).initialValue ?? '';
     } else if (widget.rowData is SettingsSliderConfig) {
       _result = (widget.rowData as SettingsSliderConfig).initialValue ??
           (widget.rowData as SettingsSliderConfig).to;
@@ -276,8 +355,7 @@ class SettingRowState extends State<SettingRow> {
 
   void onYesNoChange({bool newVal}) {
     setState(() {
-      final SettingsYesNoConfig tmp = _stateRowData;
-      tmp.result = newVal;
+      _result = newVal;
     });
 
     widget.onSettingDataRowChange(_result);
@@ -407,7 +485,7 @@ class SettingRowState extends State<SettingRow> {
     if (_stateRowData.type == SettingDataType.kWidgetYesNo) {
       final SettingsYesNoConfig tmp = _stateRowData;
       return new CupertinoSwitch(
-        value: tmp.result ?? tmp.initialValue,
+        value: _result ?? tmp.initialValue,
         onChanged: !widget.enabled ? null : (val) => onYesNoChange(newVal: val),
         activeColor: widget.style.activeColor,
       );
@@ -610,7 +688,7 @@ class SettingRowState extends State<SettingRow> {
                   new Text(
                     _stateRowData.title,
                     style: TextStyle(
-                        color: widget.style.activeColor,
+                        color: widget.style.topTitleColor,
                         fontSize: 15.0,
                         fontWeight: FontWeight.normal),
                   ),
