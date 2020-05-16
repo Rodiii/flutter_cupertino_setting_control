@@ -129,6 +129,7 @@ class SettingsTextFieldConfig extends SettingRowConfig {
       this.maxLength,
       this.maxLines = 1,
       this.textInputType = TextInputType.text,
+      this.textCapitalization = TextCapitalization.sentences,
       this.initialValue})
       : super(type: SettingDataType.kWidgetTextField, title: title, unit: unit);
 
@@ -136,6 +137,7 @@ class SettingsTextFieldConfig extends SettingRowConfig {
   final int maxLength;
   final int maxLines;
   final TextInputType textInputType;
+  final TextCapitalization textCapitalization;
 }
 
 class SettingsRowConfiguration {
@@ -193,7 +195,8 @@ class SettingRow extends StatefulWidget {
 /// The state of the currently displayed tasks widget
 class SettingRowState extends State<SettingRow> {
   SettingRowConfig _stateRowData;
-  final TextEditingController _textfieldController = new TextEditingController();
+  final TextEditingController _textfieldController =
+      new TextEditingController();
 
   dynamic _result;
 
@@ -444,9 +447,7 @@ class SettingRowState extends State<SettingRow> {
                 : null,
             maxLines: tmp.maxLines,
             keyboardType: tmp.textInputType,
-            textCapitalization: tmp.textInputType == TextInputType.text
-                ? TextCapitalization.sentences
-                : TextCapitalization.none,
+            textCapitalization: tmp.textCapitalization,
             autocorrect: tmp.textInputType == TextInputType.text,
             style: TextStyle(
                 color: widget.style.textColor, fontSize: widget.style.fontSize),
