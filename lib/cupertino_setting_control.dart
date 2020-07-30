@@ -242,11 +242,12 @@ class SettingsRowStyle {
 class SettingRow extends StatefulWidget {
   /// A setting widget with multiple configuration options
   const SettingRow(
-      {this.rowData,
+      {Key key,
+      this.rowData,
       this.onSettingDataRowChange,
       this.config = const SettingsRowConfiguration(),
       this.style = const SettingsRowStyle(),
-      this.enabled = true});
+      this.enabled = true}): super(key: key);
 
   /// Defines the type of the setting row widget. E.g. a drop down, text field etc.
   final SettingRowConfig rowData;
