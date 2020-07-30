@@ -1,3 +1,6 @@
+## 1.0.0+6
+  * Add super(key) to SettingRow
+
 ## 1.0.0+5
   * Added reference to entire tutorial
   * Removed NewPage settings control. It wasn't working anyway ;)

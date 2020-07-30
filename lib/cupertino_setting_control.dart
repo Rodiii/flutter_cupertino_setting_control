@@ -205,6 +205,7 @@ class SettingsRowStyle {
     this.backgroundColor = CupertinoColors.systemBackground,
     this.textColor = CupertinoColors.label,
     this.activeColor = CupertinoColors.systemBlue,
+    this.disabledColor = CupertinoColors.inactiveGray,
     this.topTitleColor = CupertinoColors.systemBlue,
     this.highlightColor = CupertinoColors.systemGrey6,
     this.contentPadding = 15.0,
@@ -221,6 +222,9 @@ class SettingsRowStyle {
 
   /// Sets the "active" color for the configurable setting widget
   final Color activeColor;
+
+  /// Sets the "disabled" color for the configurable setting widget
+  final Color disabledColor;
 
   /// Sets the color for title of the setting if the top title option is chosen
   final Color topTitleColor;
@@ -465,6 +469,7 @@ class SettingRowState extends State<SettingRow> {
         value: _result ?? tmp.initialValue,
         onChanged: !widget.enabled ? null : (val) => onYesNoChange(newVal: val),
         activeColor: widget.style.activeColor,
+        trackColor: widget.style.disabledColor,
       );
     }
 
@@ -488,7 +493,7 @@ class SettingRowState extends State<SettingRow> {
         border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(6.0),
             borderSide:
-                BorderSide(color: CupertinoColors.inactiveGray, width: 0.0)),
+                BorderSide(color: Colors.transparent, width: 0.0)),
       );
 
       return Expanded(
@@ -745,6 +750,8 @@ class SettingRowState extends State<SettingRow> {
                     )
                   : Column(children: <Widget>[
                       Row(
+                        crossAxisAlignment: !widget.config.showTitleLeft && !widget.config.showTopTitle ? CrossAxisAlignment.center : CrossAxisAlignment.start,
+                        mainAxisAlignment: !widget.config.showTitleLeft && !widget.config.showTopTitle ? MainAxisAlignment.center : MainAxisAlignment.start,
                         children: <Widget>[
                           widget.config.showTitleLeft
                               ? Expanded(
