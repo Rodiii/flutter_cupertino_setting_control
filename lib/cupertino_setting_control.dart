@@ -1,11 +1,10 @@
 library cupertino_setting_control;
 
+import 'dart:async';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-
-import 'dart:async';
-import 'dart:io';
 
 import 'package:cupertino_range_slider/cupertino_range_slider.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -387,7 +386,6 @@ class SettingRowState extends State<SettingRow> {
 
   void onTextFieldChange() {
     //setState(() {
-    final SettingsTextFieldConfig tmp = _stateRowData;
     _result = _textfieldController.text;
     //});
 
@@ -420,7 +418,7 @@ class SettingRowState extends State<SettingRow> {
             ? _result[0].round().toString()
             : _result[0].toString();
 
-      resultText = resultFrom + '-' + resultTo + tmp.unit;
+      resultText = '$resultFrom-$resultTo${tmp.unit}';
     }
 
     // Widgets which are "pressable"
@@ -490,11 +488,12 @@ class SettingRowState extends State<SettingRow> {
         contentPadding: EdgeInsets.all(widget.style.contentPadding),
         enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(6.0),
-            borderSide:
-                BorderSide(color: CupertinoColors.inactiveGray, width: 0.0)),
+            borderSide: const BorderSide(
+                color: CupertinoColors.inactiveGray, width: 0.0)),
         border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(6.0),
-            borderSide: BorderSide(color: Colors.transparent, width: 0.0)),
+            borderSide:
+                const BorderSide(color: Colors.transparent, width: 0.0)),
       );
 
       return Expanded(
@@ -583,7 +582,7 @@ class SettingRowState extends State<SettingRow> {
     for (var data in currentList) {
       if (data is List) {
         pickerListWidgets.addAll(_getDropdownWidgets(
-            currentList: data, pre: pre == '' ? ' - ' : ' ' + pre));
+            currentList: data, pre: pre == '' ? ' - ' : ' $pre'));
       } else if (data is String) {
         pickerListWidgets.add(Center(
           child: Text(pre + data.toString()),
@@ -722,7 +721,7 @@ class SettingRowState extends State<SettingRow> {
                       decoration: BoxDecoration(
                         color: currentRowColor ?? widget.style.backgroundColor,
                         borderRadius: BorderRadius.circular(6.0),
-                        border: Border(
+                        border: const Border(
                           bottom: BorderSide(
                               color: CupertinoColors.inactiveGray, width: 0.0),
                           top: BorderSide(
