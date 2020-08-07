@@ -1,3 +1,6 @@
+## 1.0.0+7
+  * Fixed a bug that caused dark mode not to apply to background color
+
 ## 1.0.0+6
   * Add super(key) to SettingRow
 

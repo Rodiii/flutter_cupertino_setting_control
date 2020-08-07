@@ -247,7 +247,8 @@ class SettingRow extends StatefulWidget {
       this.onSettingDataRowChange,
       this.config = const SettingsRowConfiguration(),
       this.style = const SettingsRowStyle(),
-      this.enabled = true}): super(key: key);
+      this.enabled = true})
+      : super(key: key);
 
   /// Defines the type of the setting row widget. E.g. a drop down, text field etc.
   final SettingRowConfig rowData;
@@ -493,8 +494,7 @@ class SettingRowState extends State<SettingRow> {
                 BorderSide(color: CupertinoColors.inactiveGray, width: 0.0)),
         border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(6.0),
-            borderSide:
-                BorderSide(color: Colors.transparent, width: 0.0)),
+            borderSide: BorderSide(color: Colors.transparent, width: 0.0)),
       );
 
       return Expanded(
@@ -637,7 +637,7 @@ class SettingRowState extends State<SettingRow> {
     if (_stateRowData.type == SettingDataType.kWidgetDropdown ||
         _stateRowData.type == SettingDataType.kWidgetUrlData ||
         _stateRowData.type == SettingDataType.kWidgetButtonData) {
-      currentRowColor = widget.style.backgroundColor;
+      currentRowColor = null;
       setState(() {});
     }
   }
@@ -646,14 +646,13 @@ class SettingRowState extends State<SettingRow> {
     if (_stateRowData.type == SettingDataType.kWidgetDropdown ||
         _stateRowData.type == SettingDataType.kWidgetUrlData ||
         _stateRowData.type == SettingDataType.kWidgetButtonData) {
-      currentRowColor = widget.style.backgroundColor;
+      currentRowColor = null;
       setState(() {});
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    currentRowColor ??= widget.style.backgroundColor;
     return _buildSettingControl(context);
   }
 
@@ -700,7 +699,7 @@ class SettingRowState extends State<SettingRow> {
                       ? const EdgeInsets.fromLTRB(25.0, 0.0, 25.0, 0.0)
                       : EdgeInsets.zero,
               decoration: BoxDecoration(
-                color: currentRowColor,
+                color: currentRowColor ?? widget.style.backgroundColor,
                 border: widget.config.showAsSingleSetting
                     ? null
                     : const Border(
@@ -721,7 +720,7 @@ class SettingRowState extends State<SettingRow> {
               child: widget.config.showAsTextField
                   ? Container(
                       decoration: BoxDecoration(
-                        color: currentRowColor,
+                        color: currentRowColor ?? widget.style.backgroundColor,
                         borderRadius: BorderRadius.circular(6.0),
                         border: Border(
                           bottom: BorderSide(
@@ -751,8 +750,14 @@ class SettingRowState extends State<SettingRow> {
                     )
                   : Column(children: <Widget>[
                       Row(
-                        crossAxisAlignment: !widget.config.showTitleLeft && !widget.config.showTopTitle ? CrossAxisAlignment.center : CrossAxisAlignment.start,
-                        mainAxisAlignment: !widget.config.showTitleLeft && !widget.config.showTopTitle ? MainAxisAlignment.center : MainAxisAlignment.start,
+                        crossAxisAlignment: !widget.config.showTitleLeft &&
+                                !widget.config.showTopTitle
+                            ? CrossAxisAlignment.center
+                            : CrossAxisAlignment.start,
+                        mainAxisAlignment: !widget.config.showTitleLeft &&
+                                !widget.config.showTopTitle
+                            ? MainAxisAlignment.center
+                            : MainAxisAlignment.start,
                         children: <Widget>[
                           widget.config.showTitleLeft
                               ? Expanded(
