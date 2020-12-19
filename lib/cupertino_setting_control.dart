@@ -529,7 +529,9 @@ class SettingRowState extends State<SettingRow> {
               max: tmp.to,
               value: valueToUse >= tmp.from && valueToUse <= tmp.to
                   ? valueToUse
-                  : valueToUse > tmp.to ? tmp.to : tmp.from,
+                  : valueToUse > tmp.to
+                      ? tmp.to
+                      : tmp.from,
               activeColor: widget.style.activeColor,
               onChanged: onSliderChange,
               onChangeEnd: onSliderChangeEnd,

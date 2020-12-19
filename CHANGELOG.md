@@ -1,3 +1,7 @@
+## 1.0.1
+  * Updated dependencies
+  * Formatted code
+
 ## 1.0.0+7
   * Fixed a bug that caused dark mode not to apply to background color
 
