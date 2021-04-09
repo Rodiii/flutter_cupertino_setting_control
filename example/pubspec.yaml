@@ -2,6 +2,9 @@ name: example
 description: Flutter Cupertino Setting Control Example
 version: 1.0.1
 
+environment:
+  sdk: '>=2.10.0 <3.0.0'
+
 dependencies:
   cupertino_setting_control:
     path: ../
