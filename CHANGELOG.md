@@ -1,3 +1,6 @@
+## 1.0.3
+  * Feature: crossAxisAlignment is now always center
+
 ## 1.0.2
   * Updated dependencies
 

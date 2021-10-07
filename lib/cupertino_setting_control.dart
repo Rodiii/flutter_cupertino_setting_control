@@ -751,10 +751,7 @@ class SettingRowState extends State<SettingRow> {
                     )
                   : Column(children: <Widget>[
                       Row(
-                        crossAxisAlignment: !widget.config.showTitleLeft &&
-                                !widget.config.showTopTitle
-                            ? CrossAxisAlignment.center
-                            : CrossAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.center,
                         mainAxisAlignment: !widget.config.showTitleLeft &&
                                 !widget.config.showTopTitle
                             ? MainAxisAlignment.center

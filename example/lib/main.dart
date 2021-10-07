@@ -52,8 +52,7 @@ class _MyHomeState extends State<MyHome> {
               config: SettingsRowConfiguration(
                   showTitleLeft: !_titleOnTop, showTopTitle: _titleOnTop),
               rowData: SettingsURLConfig(
-                  title: 'Privacy',
-                  url: 'https://yourprivacystuff.notexistant')),
+                  title: 'Privacy', url: 'https://yourprivacystuff.de')),
           SizedBox(height: _titleOnTop ? 10.0 : 0.0),
           new SettingRow(
               config: SettingsRowConfiguration(

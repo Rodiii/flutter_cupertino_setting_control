@@ -1,6 +1,6 @@
 name: cupertino_setting_control
 description: Wrapper for multiple kind of Cupertino Inputs (Textfield, Dropdown, Slider)
-version: 1.0.2
+version: 1.0.3
 homepage: https://github.com/Rodiii/flutter_cupertino_setting_control
 maintainer: Christoph Rothermel (@rothech)
 
