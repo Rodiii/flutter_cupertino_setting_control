@@ -1,7 +1,6 @@
 import 'package:cupertino_setting_control/cupertino_setting_control.dart';
-import 'package:flutter/material.dart';
-
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 
 void main() => runApp(ExampleApp());
 
@@ -49,22 +48,26 @@ class _MyHomeState extends State<MyHome> {
                     fontSize: 15.0,
                   ))),
           new SettingRow(
-              config: SettingsRowConfiguration(
-                  showTitleLeft: !_titleOnTop, showTopTitle: _titleOnTop),
-              rowData: SettingsURLConfig(
-                  title: 'Privacy', url: 'https://yourprivacystuff.de')),
+            config: SettingsRowConfiguration(
+                showTitleLeft: !_titleOnTop, showTopTitle: _titleOnTop),
+            rowData: SettingsURLConfig(
+                title: 'Privacy', url: 'https://yourprivacystuff.de'),
+            onSettingDataRowChange: () => {},
+          ),
           SizedBox(height: _titleOnTop ? 10.0 : 0.0),
           new SettingRow(
-              config: SettingsRowConfiguration(
-                  showTitleLeft: !_titleOnTop, showTopTitle: _titleOnTop),
-              rowData: SettingsButtonConfig(
-                  title: 'Licenses',
-                  tick: true,
-                  functionToCall: () => showLicensePage(
-                      context: context,
-                      applicationName: 'example',
-                      applicationVersion: 'v1.1',
-                      useRootNavigator: true))),
+            config: SettingsRowConfiguration(
+                showTitleLeft: !_titleOnTop, showTopTitle: _titleOnTop),
+            rowData: SettingsButtonConfig(
+                title: 'Licenses',
+                tick: true,
+                functionToCall: () => showLicensePage(
+                    context: context,
+                    applicationName: 'example',
+                    applicationVersion: 'v1.1',
+                    useRootNavigator: true)),
+            onSettingDataRowChange: () => {},
+          ),
         ],
       ),
     );
@@ -118,7 +121,8 @@ class _MyHomeState extends State<MyHome> {
                   'Germany': 'Germany',
                   'Spain': 'Spain',
                   'France': 'France'
-                }),
+                },
+                onDropdownFinished: () => {}),
             onSettingDataRowChange: onSearchAreaChange,
             config: SettingsRowConfiguration(
                 showAsTextField: false,
@@ -206,6 +210,7 @@ class _MyHomeState extends State<MyHome> {
                     showTitleLeft: !_titleOnTop,
                     showTopTitle: _titleOnTop,
                     showAsSingleSetting: false),
+                onSettingDataRowChange: () => {},
               )
             ]));
 
@@ -230,6 +235,7 @@ class _MyHomeState extends State<MyHome> {
     );
   }
 
+  // ignore: avoid_positional_boolean_parameters
   void onChatSettingChange(bool data) {
     setState(() {
       _chatResult = data;

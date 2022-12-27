@@ -1,3 +1,6 @@
+## 1.1.0
+  * Refactor: Add null sound safety
+
 ## 1.0.3
   * Feature: crossAxisAlignment is now always center
 

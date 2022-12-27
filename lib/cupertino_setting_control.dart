@@ -2,12 +2,11 @@ library cupertino_setting_control;
 
 import 'dart:async';
 
+import 'package:cupertino_range_slider_improved/cupertino_range_slider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-
-import 'package:cupertino_range_slider/cupertino_range_slider.dart';
-import 'package:url_launcher/url_launcher.dart';
+import 'package:url_launcher/url_launcher_string.dart';
 
 enum SettingDataType {
   kWidgetSlider,
@@ -21,7 +20,8 @@ enum SettingDataType {
 
 class SettingRowConfig {
   /// Base type for all possible settings configuration
-  const SettingRowConfig({this.title, this.type, this.unit = ''});
+  const SettingRowConfig(
+      {required this.title, required this.type, this.unit = ''});
 
   /// The title which shall be displayed for the widget (e.g. on the left side)
   final String title;
@@ -38,9 +38,9 @@ class SettingsSliderConfig extends SettingRowConfig {
   SettingsSliderConfig(
       {title,
       unit = '',
-      this.from,
-      this.to,
-      this.initialValue,
+      required this.from,
+      required this.to,
+      required this.initialValue,
       this.justIntValues = false})
       : super(type: SettingDataType.kWidgetSlider, title: title, unit: unit);
 
@@ -59,7 +59,7 @@ class SettingsSliderConfig extends SettingRowConfig {
 
 class SettingsURLConfig extends SettingRowConfig {
   /// Config for a setting widget which will open an URL if clicked
-  SettingsURLConfig({title, unit = '', this.url})
+  SettingsURLConfig({title, unit = '', required this.url})
       : super(type: SettingDataType.kWidgetUrlData, title: title, unit: unit);
 
   /// URL which shall be opened if the setting widget is clicked
@@ -69,7 +69,7 @@ class SettingsURLConfig extends SettingRowConfig {
 class SettingsButtonConfig extends SettingRowConfig {
   /// Config for a button setting widget
   SettingsButtonConfig(
-      {title, unit = '', this.functionToCall, this.tick = false})
+      {title, unit = '', required this.functionToCall, this.tick = false})
       : super(
             type: SettingDataType.kWidgetButtonData, title: title, unit: unit);
 
@@ -85,10 +85,10 @@ class SettingsSliderFromToConfig extends SettingRowConfig {
   SettingsSliderFromToConfig(
       {title,
       unit = '',
-      this.from,
-      this.to,
-      this.initialFrom,
-      this.initialTo,
+      required this.from,
+      required this.to,
+      required this.initialFrom,
+      required this.initialTo,
       this.justIntValues = false})
       : super(
             type: SettingDataType.kWidgetSliderFromTo,
@@ -116,10 +116,10 @@ class SettingsDropDownConfig extends SettingRowConfig {
   SettingsDropDownConfig(
       {title,
       unit = '',
-      this.choices,
+      required this.choices,
       this.redList = const [],
-      this.initialKey,
-      this.onDropdownFinished})
+      required this.initialKey,
+      required this.onDropdownFinished})
       : super(type: SettingDataType.kWidgetDropdown, title: title, unit: unit);
 
   /// Contains the choices which shall be selectable for the user. This is a key, value map.
@@ -138,7 +138,7 @@ class SettingsDropDownConfig extends SettingRowConfig {
 
 class SettingsYesNoConfig extends SettingRowConfig {
   /// Config for a boolean (=yes no) settings widget
-  SettingsYesNoConfig({title, unit = '', this.initialValue})
+  SettingsYesNoConfig({title, unit = '', required this.initialValue})
       : super(type: SettingDataType.kWidgetYesNo, title: title, unit: unit);
 
   /// The initial value which shall be selected by the widget
@@ -150,11 +150,11 @@ class SettingsTextFieldConfig extends SettingRowConfig {
   SettingsTextFieldConfig(
       {title,
       unit = '',
-      this.maxLength,
+      this.maxLength = -1,
       this.maxLines = 1,
       this.textInputType = TextInputType.text,
       this.textCapitalization = TextCapitalization.sentences,
-      this.initialValue})
+      required this.initialValue})
       : super(type: SettingDataType.kWidgetTextField, title: title, unit: unit);
 
   /// The initial value which shall be visible in the text field
@@ -241,9 +241,9 @@ class SettingsRowStyle {
 class SettingRow extends StatefulWidget {
   /// A setting widget with multiple configuration options
   const SettingRow(
-      {Key key,
-      this.rowData,
-      this.onSettingDataRowChange,
+      {Key? key,
+      required this.rowData,
+      required this.onSettingDataRowChange,
       this.config = const SettingsRowConfiguration(),
       this.style = const SettingsRowStyle(),
       this.enabled = true})
@@ -270,7 +270,7 @@ class SettingRow extends StatefulWidget {
 
 /// The state of the currently displayed tasks widget
 class SettingRowState extends State<SettingRow> {
-  SettingRowConfig _stateRowData;
+  SettingRowConfig? _stateRowData;
   final TextEditingController _textfieldController =
       new TextEditingController();
 
@@ -290,19 +290,16 @@ class SettingRowState extends State<SettingRow> {
         _result = (widget.rowData as SettingsDropDownConfig).choices.keys.first;
       }
     } else if (widget.rowData is SettingsSliderConfig) {
-      _result = (widget.rowData as SettingsSliderConfig).initialValue ??
-          (widget.rowData as SettingsSliderConfig).to;
+      _result = (widget.rowData as SettingsSliderConfig).initialValue;
     } else if (widget.rowData is SettingsSliderFromToConfig) {
       _result = [
-        (widget.rowData as SettingsSliderFromToConfig).initialFrom ??
-            (widget.rowData as SettingsSliderFromToConfig).from,
-        (widget.rowData as SettingsSliderFromToConfig).initialTo ??
-            (widget.rowData as SettingsSliderFromToConfig).to
+        (widget.rowData as SettingsSliderFromToConfig).initialFrom,
+        (widget.rowData as SettingsSliderFromToConfig).initialTo
       ];
     } else if (widget.rowData is SettingsTextFieldConfig) {
-      _result = (widget.rowData as SettingsTextFieldConfig).initialValue ?? '';
+      _result = (widget.rowData as SettingsTextFieldConfig).initialValue;
     } else if (widget.rowData is SettingsYesNoConfig) {
-      _result = (widget.rowData as SettingsYesNoConfig).initialValue ?? true;
+      _result = (widget.rowData as SettingsYesNoConfig).initialValue;
     }
   }
 
@@ -313,32 +310,32 @@ class SettingRowState extends State<SettingRow> {
   }
 
   Future<void> gotoURL() async {
-    if (_stateRowData.type != SettingDataType.kWidgetUrlData)
+    if (_stateRowData!.type != SettingDataType.kWidgetUrlData)
       return;
     else {
-      final SettingsURLConfig tmp = _stateRowData;
-      await _launchURL(tmp.url);
+      final SettingsURLConfig? tmp = _stateRowData as SettingsURLConfig?;
+      await _launchURL(tmp!.url);
     }
   }
 
   Future<void> callFunction() async {
-    if (_stateRowData.type != SettingDataType.kWidgetButtonData)
+    if (_stateRowData?.type != SettingDataType.kWidgetButtonData)
       return;
     else {
-      final SettingsButtonConfig tmp = _stateRowData;
-      await tmp.functionToCall();
+      final SettingsButtonConfig? tmp = _stateRowData as SettingsButtonConfig?;
+      await tmp!.functionToCall();
     }
   }
 
   Future<void> _launchURL(String url) async {
-    if (await canLaunch(url)) {
-      await launch(url);
+    if (await canLaunchUrlString(url)) {
+      await launchUrlString(url);
     } else {
       throw Exception('Could not launch $url');
     }
   }
 
-  void onYesNoChange({bool newVal}) {
+  void onYesNoChange({required bool newVal}) {
     setState(() {
       _result = newVal;
     });
@@ -377,8 +374,9 @@ class SettingRowState extends State<SettingRow> {
 
   void onDropdownChange(int newIndex) {
     setState(() {
-      final SettingsDropDownConfig tmp = _stateRowData;
-      _result = tmp.choices.keys.elementAt(newIndex);
+      final SettingsDropDownConfig? tmp =
+          _stateRowData as SettingsDropDownConfig?;
+      _result = tmp!.choices.keys.elementAt(newIndex);
     });
 
     widget.onSettingDataRowChange(_result);
@@ -393,19 +391,20 @@ class SettingRowState extends State<SettingRow> {
   }
 
   Widget getRightWidget() {
-    String resultText;
-    if (_stateRowData.type == SettingDataType.kWidgetSlider) {
-      final SettingsSliderConfig tmp = _stateRowData;
-      if (tmp.to - _result < 0.1)
+    String? resultText;
+    if (_stateRowData!.type == SettingDataType.kWidgetSlider) {
+      final SettingsSliderConfig? tmp = _stateRowData as SettingsSliderConfig?;
+      if (tmp!.to - _result < 0.1)
         resultText = 'MAX';
       else
         resultText = tmp.justIntValues
             ? _result.round().toString() + tmp.unit
             : _result.toString() + tmp.unit;
-    } else if (_stateRowData.type == SettingDataType.kWidgetSliderFromTo) {
-      final SettingsSliderFromToConfig tmp = _stateRowData;
+    } else if (_stateRowData!.type == SettingDataType.kWidgetSliderFromTo) {
+      final SettingsSliderFromToConfig? tmp =
+          _stateRowData as SettingsSliderFromToConfig?;
       String resultFrom = '', resultTo = '';
-      if (tmp.to - _result[1] < 0.1)
+      if (tmp!.to - _result[1] < 0.1)
         resultTo = 'MAX';
       else
         resultTo = tmp.justIntValues
@@ -422,33 +421,37 @@ class SettingRowState extends State<SettingRow> {
     }
 
     // Widgets which are "pressable"
-    if (_stateRowData.type == SettingDataType.kWidgetDropdown) {
-      final SettingsDropDownConfig tmp = _stateRowData;
-      resultText = tmp.choices[_result] + tmp.unit;
-    } else if (_stateRowData.type == SettingDataType.kWidgetUrlData ||
-        _stateRowData.type == SettingDataType.kWidgetButtonData) {
+    if (_stateRowData!.type == SettingDataType.kWidgetDropdown) {
+      final SettingsDropDownConfig? tmp =
+          _stateRowData as SettingsDropDownConfig?;
+      resultText = tmp!.choices[_result]! + tmp.unit;
+    } else if (_stateRowData!.type == SettingDataType.kWidgetUrlData ||
+        _stateRowData!.type == SettingDataType.kWidgetButtonData) {
       resultText = '';
     }
+
     if (resultText != null) {
       return new Row(children: [
         Text(resultText,
             style: TextStyle(
                 fontSize: widget.style.fontSize,
                 color: !widget.config.showAsTextField &&
-                        !(_stateRowData.type == SettingDataType.kWidgetSlider ||
-                            _stateRowData.type ==
+                        !(_stateRowData!.type ==
+                                SettingDataType.kWidgetSlider ||
+                            _stateRowData!.type ==
                                 SettingDataType.kWidgetSliderFromTo) &&
-                        !(_stateRowData.type == SettingDataType.kWidgetDropdown)
+                        !(_stateRowData!.type ==
+                            SettingDataType.kWidgetDropdown)
                     ? CupertinoColors.inactiveGray
                     : widget.style.textColor),
-            textAlign: _stateRowData.type != SettingDataType.kWidgetButtonData
+            textAlign: _stateRowData!.type != SettingDataType.kWidgetButtonData
                 ? TextAlign.start
                 : TextAlign.center),
-        (_stateRowData.type != SettingDataType.kWidgetButtonData &&
-                    !(_stateRowData.type == SettingDataType.kWidgetSlider ||
-                        _stateRowData.type ==
+        (_stateRowData!.type != SettingDataType.kWidgetButtonData &&
+                    !(_stateRowData!.type == SettingDataType.kWidgetSlider ||
+                        _stateRowData!.type ==
                             SettingDataType.kWidgetSliderFromTo)) ||
-                (_stateRowData.type == SettingDataType.kWidgetButtonData &&
+                (_stateRowData!.type == SettingDataType.kWidgetButtonData &&
                     (_stateRowData as SettingsButtonConfig).tick)
             ? Container(
                 margin: const EdgeInsets.only(left: 5.0),
@@ -463,10 +466,10 @@ class SettingRowState extends State<SettingRow> {
     }
 
     // Yes/No
-    if (_stateRowData.type == SettingDataType.kWidgetYesNo) {
-      final SettingsYesNoConfig tmp = _stateRowData;
+    if (_stateRowData!.type == SettingDataType.kWidgetYesNo) {
+      final SettingsYesNoConfig? tmp = _stateRowData as SettingsYesNoConfig?;
       return new CupertinoSwitch(
-        value: _result ?? tmp.initialValue,
+        value: _result ?? tmp!.initialValue,
         onChanged: !widget.enabled ? null : (val) => onYesNoChange(newVal: val),
         activeColor: widget.style.activeColor,
         trackColor: widget.style.disabledColor,
@@ -474,14 +477,15 @@ class SettingRowState extends State<SettingRow> {
     }
 
     // Text Field Widget
-    if (_stateRowData.type == SettingDataType.kWidgetTextField) {
-      final SettingsTextFieldConfig tmp = _stateRowData;
+    if (_stateRowData!.type == SettingDataType.kWidgetTextField) {
+      final SettingsTextFieldConfig? tmp =
+          _stateRowData as SettingsTextFieldConfig?;
       _textfieldController.text = _result;
       _textfieldController.addListener(onTextFieldChange);
 
       final InputDecoration decorator = InputDecoration(
         isDense: true,
-        hintText: tmp.title,
+        hintText: tmp!.title,
         hintStyle: TextStyle(
             color: CupertinoColors.inactiveGray,
             fontSize: widget.style.fontSize),
@@ -500,7 +504,7 @@ class SettingRowState extends State<SettingRow> {
         child: new TextFormField(
             enabled: widget.enabled,
             autofocus: false,
-            inputFormatters: tmp.maxLength != null
+            inputFormatters: tmp.maxLength != -1
                 ? [
                     LengthLimitingTextInputFormatter(tmp.maxLength),
                   ]
@@ -520,12 +524,12 @@ class SettingRowState extends State<SettingRow> {
   }
 
   Widget getBottomWidget() {
-    if (_stateRowData.type == SettingDataType.kWidgetSlider) {
-      final SettingsSliderConfig tmp = _stateRowData;
+    if (_stateRowData!.type == SettingDataType.kWidgetSlider) {
+      final SettingsSliderConfig? tmp = _stateRowData as SettingsSliderConfig?;
       final double valueToUse = _result;
       return new Expanded(
           child: CupertinoSlider(
-              min: tmp.from,
+              min: tmp!.from,
               max: tmp.to,
               value: valueToUse >= tmp.from && valueToUse <= tmp.to
                   ? valueToUse
@@ -537,11 +541,12 @@ class SettingRowState extends State<SettingRow> {
               onChangeEnd: onSliderChangeEnd,
               divisions:
                   tmp.justIntValues ? (tmp.to - tmp.from).round() : null));
-    } else if (_stateRowData.type == SettingDataType.kWidgetSliderFromTo) {
-      final SettingsSliderFromToConfig tmp = _stateRowData;
+    } else if (_stateRowData!.type == SettingDataType.kWidgetSliderFromTo) {
+      final SettingsSliderFromToConfig? tmp =
+          _stateRowData as SettingsSliderFromToConfig?;
       return new Expanded(
           child: CupertinoRangeSlider(
-              min: tmp.from,
+              min: tmp!.from,
               max: tmp.to,
               minValue: _result[0],
               maxValue: _result[1],
@@ -596,8 +601,9 @@ class SettingRowState extends State<SettingRow> {
   }
 
   void showDropDownList() async {
-    final SettingsDropDownConfig tmp = _stateRowData;
-    int index = tmp.choices.keys.toList().indexOf(_result);
+    final SettingsDropDownConfig? tmp =
+        _stateRowData as SettingsDropDownConfig?;
+    int index = tmp!.choices.keys.toList().indexOf(_result);
     if (index == -1) {
       index = 0;
     }
@@ -620,33 +626,32 @@ class SettingRowState extends State<SettingRow> {
       },
     );
 
-    if ((_stateRowData as SettingsDropDownConfig).onDropdownFinished != null)
-      (_stateRowData as SettingsDropDownConfig).onDropdownFinished();
+    (_stateRowData as SettingsDropDownConfig?)!.onDropdownFinished();
   }
 
-  Color currentRowColor;
+  Color? currentRowColor;
   void highlightRow(TapDownDetails det) {
-    if (_stateRowData.type == SettingDataType.kWidgetDropdown ||
-        _stateRowData.type == SettingDataType.kWidgetUrlData ||
-        _stateRowData.type == SettingDataType.kWidgetButtonData) {
+    if (_stateRowData!.type == SettingDataType.kWidgetDropdown ||
+        _stateRowData!.type == SettingDataType.kWidgetUrlData ||
+        _stateRowData!.type == SettingDataType.kWidgetButtonData) {
       currentRowColor = widget.style.highlightColor;
       setState(() {});
     }
   }
 
   void unhighlightRow() {
-    if (_stateRowData.type == SettingDataType.kWidgetDropdown ||
-        _stateRowData.type == SettingDataType.kWidgetUrlData ||
-        _stateRowData.type == SettingDataType.kWidgetButtonData) {
+    if (_stateRowData!.type == SettingDataType.kWidgetDropdown ||
+        _stateRowData!.type == SettingDataType.kWidgetUrlData ||
+        _stateRowData!.type == SettingDataType.kWidgetButtonData) {
       currentRowColor = null;
       setState(() {});
     }
   }
 
   void unhighlightUpRow(TapUpDetails det) {
-    if (_stateRowData.type == SettingDataType.kWidgetDropdown ||
-        _stateRowData.type == SettingDataType.kWidgetUrlData ||
-        _stateRowData.type == SettingDataType.kWidgetButtonData) {
+    if (_stateRowData!.type == SettingDataType.kWidgetDropdown ||
+        _stateRowData!.type == SettingDataType.kWidgetUrlData ||
+        _stateRowData!.type == SettingDataType.kWidgetButtonData) {
       currentRowColor = null;
       setState(() {});
     }
@@ -668,7 +673,7 @@ class SettingRowState extends State<SettingRow> {
                   padding: const EdgeInsets.fromLTRB(25.0, 0.0, 25.0, 5.0),
                   child: Column(children: <Widget>[
                     new Text(
-                      _stateRowData.title,
+                      _stateRowData!.title,
                       style: TextStyle(
                           color: widget.style.topTitleColor,
                           fontSize: 15.0,
@@ -680,12 +685,13 @@ class SettingRowState extends State<SettingRow> {
             onTap: !widget.enabled
                 ? null
                 : () async {
-                    if (_stateRowData.type == SettingDataType.kWidgetDropdown) {
+                    if (_stateRowData!.type ==
+                        SettingDataType.kWidgetDropdown) {
                       showDropDownList();
-                    } else if (_stateRowData.type ==
+                    } else if (_stateRowData!.type ==
                         SettingDataType.kWidgetUrlData) {
                       await gotoURL();
-                    } else if (_stateRowData.type ==
+                    } else if (_stateRowData!.type ==
                         SettingDataType.kWidgetButtonData) {
                       await callFunction();
                     }
@@ -711,11 +717,11 @@ class SettingRowState extends State<SettingRow> {
               ),
               padding: widget.config.showAsSingleSetting
                   ? EdgeInsets.zero
-                  : _stateRowData.type == SettingDataType.kWidgetSlider ||
-                          _stateRowData.type ==
+                  : _stateRowData!.type == SettingDataType.kWidgetSlider ||
+                          _stateRowData!.type ==
                               SettingDataType.kWidgetSliderFromTo
                       ? const EdgeInsets.fromLTRB(25.0, 12.5, 25.0, 2.5)
-                      : _stateRowData.type == SettingDataType.kWidgetYesNo
+                      : _stateRowData!.type == SettingDataType.kWidgetYesNo
                           ? const EdgeInsets.fromLTRB(25.0, 2.5, 25.0, 2.5)
                           : const EdgeInsets.fromLTRB(25.0, 12.5, 25.0, 12.5),
               child: widget.config.showAsTextField
@@ -734,12 +740,12 @@ class SettingRowState extends State<SettingRow> {
                               color: CupertinoColors.inactiveGray, width: 0.0),
                         ),
                       ),
-                      padding:
-                          _stateRowData.type == SettingDataType.kWidgetSlider ||
-                                  _stateRowData.type ==
-                                      SettingDataType.kWidgetSliderFromTo
-                              ? const EdgeInsets.fromLTRB(15.0, 12.5, 25.0, 2.5)
-                              : EdgeInsets.all(widget.style.contentPadding),
+                      padding: _stateRowData!.type ==
+                                  SettingDataType.kWidgetSlider ||
+                              _stateRowData!.type ==
+                                  SettingDataType.kWidgetSliderFromTo
+                          ? const EdgeInsets.fromLTRB(15.0, 12.5, 25.0, 2.5)
+                          : EdgeInsets.all(widget.style.contentPadding),
                       child: Column(children: <Widget>[
                         Row(
                           children: <Widget>[
@@ -759,7 +765,7 @@ class SettingRowState extends State<SettingRow> {
                         children: <Widget>[
                           widget.config.showTitleLeft
                               ? Expanded(
-                                  child: Text(_stateRowData.title,
+                                  child: Text(_stateRowData!.title,
                                       style: TextStyle(
                                         fontSize: widget.style.fontSize,
                                         color: widget.style.textColor,
@@ -782,9 +788,9 @@ class SettingRowState extends State<SettingRow> {
 class SettingsButton extends StatefulWidget {
   SettingsButton(
       {this.textColor = Colors.white,
-      this.buttonText,
+      required this.buttonText,
       this.buttonColor = CupertinoColors.systemBlue,
-      this.callFunction});
+      required this.callFunction});
 
   final Color buttonColor;
   final Color textColor;
